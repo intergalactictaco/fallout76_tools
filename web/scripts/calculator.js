@@ -1,32 +1,15 @@
-var human_readable = {
-    eng: {
-        a: "Dirty Water",
-        b: "Nuclear Material",
-        c: "Carnal Weeper",
-        d: "Radlily",
-        e: "Crystalcup",
-        f: "Embergold",
-        g: "Green Invader",
-        h: "Starlace",
-        i: "Candykill",
-        j: "Glorybell",
-        k: "Seesprout",
-        l: "Gigablossom",
-        m: "Black-Eyed Susan's soothin'",
+function getFromAmount(item, amount, totals = {}) {
+
+    totals[item] = (totals[item] || 0) + amount;
+
+    if (!RECIPES[item] || Object.keys(RECIPES[item]).length === 0) {
+        return totals;
     }
-}
-var recipes = {
-    a: {},
-    b: {},
-    c: {},
-    d: {},
-    e: {},
-    f: {c: 2, d: 2, b: 1},
-    g: {e: 2, d: 1, b: 1},
-    h: {e: 2, c: 2, b: 1},
-    i: {c: 1, j: 2, b: 1},
-    j: {f: 2, g: 1, b: 1},
-    k: {g: 2, h: 1, b: 1},
-    l: {i: 2, j: 1, k: 1, b: 1},
-    m: {a: 1, j: 1, k: 1, l: 1},
+
+    for (let ingredient in RECIPES[item]) {
+        const needed = RECIPES[item][ingredient] * amount;
+        getFromAmount(ingredient, needed, totals);
+    }
+
+    return totals;
 }

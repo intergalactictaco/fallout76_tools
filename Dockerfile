@@ -1,10 +1,12 @@
 FROM python:3.11-slim
 
-RUN pip install livereload
-
 WORKDIR /app
 
 COPY scripts/server.py .
+
+COPY scripts/requirements.txt .
+
+RUN pip install -r requirements.txt
 
 EXPOSE 8080
 
