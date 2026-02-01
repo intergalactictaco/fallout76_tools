@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="scripts/const.js"></script>
+    <script src="scripts/calculator.js"></script>
+    <title>Fallout 76 Tools</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fallout 76 Tools</h1>
+    <p>Welcome to the Fallout 76 Tools application.</p>
+    <p>I want</p>
+    <pre id="output1"></pre>
+    <p>I have</p>
+    <pre id="output2"></pre>
+</body>
+<script>
+    //DEBUG SCRIPT
+    const x = 1;
+
+    const result = getFromAmount("m", x);
+    let text = "";
+
+    Object.keys(result).sort().forEach(key => {
+        text += `${HUMAN_READABLE.en[key]} (${key}): ${result[key]}\n`;
+    });
+
+    document.getElementById("output1").textContent = text;
+</script>
+</html>

@@ -1,0 +1,10 @@
+services:
+  dev-server:
+    build: .
+    container_name: python-web-dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./web:/web
+    environment:
+      - PYTHONUNBUFFERED=1
