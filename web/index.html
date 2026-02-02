@@ -28,6 +28,8 @@
     <pre id="output1"></pre>
     <p>I have</p>
     <pre id="output2"></pre>
+    <p>I need</p>
+    <pre id="output3"></pre>
 </body>
 <script>
     //DEBUG SCRIPT
@@ -37,9 +39,38 @@
     let text = "";
 
     Object.keys(result).sort().forEach(key => {
-        text += `${HUMAN_READABLE.en[key]} (${key}): ${result[key]}\n`;
+        text += `${HUMAN_READABLE.es_la[key]} (${key}): ${result[key]}\n`;
     });
 
     document.getElementById("output1").textContent = text;
+    text = "";
+    let list =  {
+        a: 0,
+        b: 0,
+        c: 0,
+        d: 0,
+        e: 0,
+        f: 0,
+        g: 0,
+        h: 0,
+        i: 0,
+        j: 0,
+        k: 0,
+        l: 0,
+    };
+
+    text = "";
+    Object.keys(list).sort().forEach(key => {
+        text += `${HUMAN_READABLE.es_la[key]} (${key}): ${list[key]}\n`;
+    });
+    document.getElementById("output2").textContent = text;
+    text = "";
+    let r = getMaxCraftable("m", list);
+    Object.keys(r.missingForNext).sort().forEach(key => {
+        text += `${HUMAN_READABLE.es_la[key]} (${key}): ${r.missingForNext[key]}\n`;
+    });
+    text += `Max craftable: ${r.maxCraftable}\n\n`;
+
+    document.getElementById("output3").textContent = text;
 </script>
 </html>

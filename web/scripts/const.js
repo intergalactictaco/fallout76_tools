@@ -13,6 +13,21 @@ var HUMAN_READABLE = {
         k: "Seesprout",
         l: "Gigablossom",
         m: "Black-Eyed Susan's soothin'",
+    },
+    es_la: {
+        a: "Agua Sucia",
+        b: "Material Nuclear",
+        c: "Lagrima Carnal",
+        d: "Radnolia",
+        e: "Copa de Cristal",
+        f: "Llama Dorada",
+        g: "Invasora Esmeralda",
+        h: "Estrella del Yermo",
+        i: "Marchitacea",
+        j: "Campana Gloriosa",
+        k: "Brotunia",
+        l: "Megaflor",
+        m: "Plato Reconfortante de Susan Ojos Negros",
     }
 }
 var RECIPES = {
