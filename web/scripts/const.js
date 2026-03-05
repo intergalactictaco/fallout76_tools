@@ -1,4 +1,4 @@
-var HUMAN_READABLE = {
+const HUMAN_READABLE = {
     en: {
         a: "Dirty Water",
         b: "Nuclear Material",
@@ -30,7 +30,7 @@ var HUMAN_READABLE = {
         m: "Plato Reconfortante de Susan Ojos Negros",
     }
 }
-var RECIPES = {
+const RECIPES = {
     a: {},
     b: {},
     c: {},
@@ -45,3 +45,7 @@ var RECIPES = {
     l: {j: 2, i: 1, k: 1, b: 1},
     m: {a: 1, i: 1, k: 1, l: 1},
 }
+
+const BASIC_ITEMS = Object.keys(RECIPES).filter(
+  key => Object.keys(RECIPES[key]).length === 0
+);

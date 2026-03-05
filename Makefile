@@ -30,6 +30,8 @@ run_server:
 
 stop: stop_server
 
+down: stop_server
+
 stop_server:
 	@echo "🛑 Stopping server..."
 	@ $(COMPOSE_CMD) down
