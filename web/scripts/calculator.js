@@ -15,30 +15,68 @@ function getFromAmount(item, amount, totals = {}) {
 }
 
 function getMaxCrafteable(inventory, target) {
-    let basicItems = getFromAmount(target, 1);
-    let filteredInventory = Object.fromEntries(
-        Object.entries(inventory).filter(([key]) => key in basicItems)
-    );
-    delete filteredInventory[target];
-    const relevanceOrder = Object.keys(filteredInventory).sort((a, b) => b.localeCompare(a));
-    console.log(BASIC_ITEMS)
-    while(true) {
-        relevanceOrder.forEach(key => {
-            console.log(key);
-        });
-        console.log(relevanceOrder)
-        if (1 == 1) {break}
+    let recipe = getFromAmount(target, 1);
+    let filteredInventory = {};
+    for(let iKey of Object.keys(inventory)) {
+        filteredInventory[iKey] = inventory[iKey];
     }
-    return null;
+    filteredInventory[target] = 0;
+    let toCraft = Object.fromEntries(
+        Object.keys(filteredInventory).map(key => [key, 0])
+    );
+    const relevanceOrder = Object.keys(filteredInventory).sort((a, b) => b.localeCompare(a));
+    const maximum = 10000;
+    let iterations = 0;
+    while(iterations <= maximum) {
+        iterations++;
+        let crafteable = true;
+        let tempToCraft = Object.fromEntries(
+            Object.keys(toCraft).map(key => [key, 0])
+        );
+        let tempRecipe = Object.fromEntries(
+            Object.keys(recipe).map(key => [key, recipe[key]])
+        );
+        for (let index = 0; index < relevanceOrder.length; index++) {
+            const key = relevanceOrder[index];
+            let needed = tempRecipe[key];
+            let having = filteredInventory[key];
+            if((needed > having) && BASIC_ITEMS.includes(key)) {
+                crafteable = false;
+                break;
+            }
+            if(having > 0) {
+                if(!BASIC_ITEMS.includes(key)) {
+                    let toRemove = Math.min(needed, having);
+                    let resources = getFromAmount(key, toRemove);
+                    filteredInventory[key] -= toRemove;
+                    for (let rKey of Object.keys(resources)) {
+                        tempRecipe[rKey] -= resources[rKey];
+                    }
+                }
+            }
+            if(tempRecipe[key] > 0) {
+                tempToCraft[key] += tempRecipe[key];
+                filteredInventory[key] -= tempRecipe[key];
+            }
+        }
+        if(crafteable) {
+            for(let cKey of Object.keys(tempToCraft)) {
+                toCraft[cKey] += tempToCraft[cKey];
+            }
+        } else {
+            break;
+        }
+    }
+    return toCraft;
 }
 
 const inventory = {
-    a: 1,
-    b: 35,
-    c: 30,
-    d: 34,
+    a: 1*15,
+    b: 34*15,
+    c: 28*15,
+    d: 32*15,
     e: 24,
-    f: 0,
+    f: 1*15,
     g: 0,
     h: 0,
     i: 0,
@@ -47,45 +85,5 @@ const inventory = {
     l: 0,
     m: 0
 };
-
-console.log(getMaxCrafteable(inventory, "f"));
-
-/*
-F
-b: 1
-c: 2
-d: 2
-
-const inventory = {
-    a: 1,
-    b: 34,
-    c: 28,
-    d: 32,
-    e: 24,
-    f: 1,
-    g: 0,
-    h: 0,
-    i: 0,
-    j: 0,
-    k: 0,
-    l: 0,
-    m: 0
-};
-
-// M
-const inventory = {
-    a: 1,
-    b: 35,
-    c: 30,
-    d: 34,
-    e: 24,
-    f: 0,
-    g: 0,
-    h: 0,
-    i: 0,
-    j: 0,
-    k: 0,
-    l: 0,
-    m: 0
-};
-*/
+console.log(inventory)
+console.log(getMaxCrafteable(inventory, "m"));
