@@ -69,21 +69,3 @@ function getMaxCrafteable(inventory, target) {
     }
     return toCraft;
 }
-
-const inventory = {
-    a: 1*15,
-    b: 34*15,
-    c: 28*15,
-    d: 32*15,
-    e: 24,
-    f: 1*15,
-    g: 0,
-    h: 0,
-    i: 0,
-    j: 0,
-    k: 0,
-    l: 0,
-    m: 0
-};
-console.log(inventory)
-console.log(getMaxCrafteable(inventory, "m"));
