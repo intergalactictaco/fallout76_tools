@@ -6,9 +6,12 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+
     <script src="scripts/const.js"></script>
     <script src="scripts/calculator.js"></script>
+
     <title>Fallout 76 Tools</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,61 +19,169 @@
             padding: 20px;
             background-color: #f5f5f5;
         }
-        h1 {
+        h1, h2 {
             color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        input, button {
+            margin-top: 5px;
+            padding: 5px;
+        }
+        pre {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 15px;
+            white-space: pre-wrap;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .section {
+            flex: 1;
+            min-width: 320px;
+            background: #ebebeb;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        /* Style for the inventory list */
+        #inventoryList {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        .inv-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .inv-item input {
+            width: 60px;
         }
     </style>
 </head>
 <body>
     <h1>Fallout 76 Tools</h1>
-    <p>Welcome to the Fallout 76 Tools application.</p>
-    <p>I want</p>
-    <pre id="output1"></pre>
-    <p>I have</p>
-    <pre id="output2"></pre>
-    <p>I need</p>
-    <pre id="output3"></pre>
+    <div class="container">
+        <div class="section">
+            <h2>Ingredient Calculator</h2>
+            <p>Calculate required ingredients for a target amount.</p>
+            <label>
+                Item key (a–m):
+                <input type="text" id="itemInput" maxlength="1" value="m">
+            </label>
+            <label>
+                Amount to craft:
+                <input type="number" id="amountInput" min="1" value="1">
+            </label>
+            <button onclick="calculate()">Calculate Required</button>
+            <pre id="output1"></pre>
+        </div>
+
+        <div class="section">
+            <h2>Max Craftable</h2>
+            <p>Enter your current stash to see what you can make.</p>
+            
+            <label>
+                Target Item to reach (a–m):
+                <input type="text" id="targetItem" maxlength="1" value="m">
+            </label>
+
+            <strong>Your Inventory:</strong>
+            <div id="inventoryList">
+                </div>
+
+            <button onclick="calculateMax()" style="margin-top: 15px; width: 100%; height: 40px; cursor: pointer;">
+                Calculate Max Possible
+            </button>
+            
+            <pre id="output2"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Populate Inventory Fields on Load
+        window.onload = () => {
+            const container = document.getElementById('inventoryList');
+            // Use keys from RECIPES to generate inputs
+            Object.keys(RECIPES).forEach(key => {
+                const name = HUMAN_READABLE.es_la[key] || key;
+                const div = document.createElement('div');
+                div.className = 'inv-item';
+                div.innerHTML = `
+                    <span>${key}: ${name}</span>
+                    <input type="number" id="inv-${key}" min="0" value="0">
+                `;
+                container.appendChild(div);
+            });
+        };
+
+        function calculate() {
+            const item = document.getElementById("itemInput").value.trim();
+            const amount = parseInt(document.getElementById("amountInput").value, 10);
+
+            if (!item || !RECIPES[item] || isNaN(amount) || amount <= 0) {
+                document.getElementById("output1").textContent =
+                    "Please enter a valid item key (a–m) and a positive amount.";
+                return;
+            }
+
+            const totals = getFromAmount(item, amount);
+            const order = Object.keys(RECIPES);
+            let output = `Totals for "${item}" x ${amount}\n\n`;
+
+            for (const key of order) {
+                if (totals[key]) {
+                    const name = HUMAN_READABLE.es_la[key] || key;
+                    output += `${key}-${name}: ${totals[key]}\n`;
+                }
+            }
+            document.getElementById("output1").textContent = output;
+        }
+
+        function calculateMax() {
+            const target = document.getElementById("targetItem").value.trim();
+            
+            // Collect inventory from individual fields
+            let inventory = {};
+            Object.keys(RECIPES).forEach(key => {
+                const val = parseInt(document.getElementById(`inv-${key}`).value, 10);
+                inventory[key] = isNaN(val) ? 0 : val;
+            });
+
+            if (!RECIPES[target]) {
+                document.getElementById("output2").textContent = "Invalid target item.";
+                return;
+            }
+
+            const results = getMaxCrafteable(inventory, target);
+            
+            let output = `Max Craft Results for "${target}":\n\n`;
+            let hasResults = false;
+
+            // Display results, filtering out items with 0
+            for (const key in results) {
+                if (results[key] > 0) {
+                    const name = HUMAN_READABLE.es_la[key] || key;
+                    output += `${key}-${name}: ${results[key]}\n`;
+                    hasResults = true;
+                }
+            }
+
+            document.getElementById("output2").textContent = hasResults ? output : "Not enough materials to craft any.";
+        }
+    </script>
 </body>
-<script>
-    //DEBUG SCRIPT
-    const x = 1;
-
-    const result = getFromAmount("m", x);
-    let text = "";
-
-    Object.keys(result).sort().forEach(key => {
-        text += `${HUMAN_READABLE.es_la[key]} (${key}): ${result[key]}\n`;
-    });
-
-    document.getElementById("output1").textContent = text;
-    text = "";
-    let list =  {
-        a: 0,
-        b: 0,
-        c: 0,
-        d: 0,
-        e: 0,
-        f: 0,
-        g: 0,
-        h: 0,
-        i: 0,
-        j: 0,
-        k: 0,
-        l: 0,
-    };
-
-    text = "";
-    Object.keys(list).sort().forEach(key => {
-        text += `${HUMAN_READABLE.es_la[key]} (${key}): ${list[key]}\n`;
-    });
-    document.getElementById("output2").textContent = text;
-    text = "";
-    let r = getMaxCraftable("m", list);
-    Object.keys(r.missingForNext).sort().forEach(key => {
-        text += `${HUMAN_READABLE.es_la[key]} (${key}): ${r.missingForNext[key]}\n`;
-    });
-    text += `Max craftable: ${r.maxCraftable}\n\n`;
-
-    document.getElementById("output3").textContent = text;
-</script>
 </html>
