@@ -1,7 +1,7 @@
 COMPOSE_CMD := docker compose
 IP_ADDR := $(shell hostname -I | awk '{print $$1}')
 
-.PHONY: help run run_server stop stop_server restart status clean logs
+.PHONY: help run run_server stop down stop_server restart status clean logs
 
 all: help
 
